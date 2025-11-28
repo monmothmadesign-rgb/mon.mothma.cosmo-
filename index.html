@@ -1,340 +1,383 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, X, Printer, Camera, Palette, Send, Mail } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Mothma Design</title>
+    
+    <!-- Підключення Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Підключення React та ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Підключення Babel для обробки JSX у браузері -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-const MonMothmaPoster = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [activeSection, setActiveSection] = useState('portfolio'); // 'portfolio', 'prices', 'contact'
-  const containerRef = useRef(null);
-  
-  // Стан форми
-  const [formData, setFormData] = useState({ name: '', message: '' });
+    <style>
+        body { margin: 0; background-color: #050510; }
+        .perspective-1000 { perspective: 1000px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-  // Внутрішні компоненти іконок
-  const TelegramIcon = () => (
-    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
-      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12.068 12.068 0 0 0-.108 0h.108zM9.408 17.568c.108 0 .216-.072.324-.216l-1.08-3.672 8.712-8.244c.324-.252.072-.432-.288-.252L6.12 11.232l-3.348-.972c-.684-.216-.72-.684.144-1.008l13.068-5.076c.576-.252 1.152.144.936 1.116l-2.268 10.728c-.18.792-.612.936-1.26.648l-3.456-2.52-1.692 1.62c-.18.18-.324.324-.54.324l.144-3.42 6.228-5.652c.252-.216-.072-.36-.36-.216l-7.776 4.932-.144.144-.072 2.376 1.656 1.26c.288.18.504.18.72.18z"/>
-    </svg>
-  );
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-  const WhatsAppIcon = () => (
-    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-    </svg>
-  );
-
-  const ViberIcon = () => (
-    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21.424 18.256c-.569.213-1.272.245-1.921.053-.597-.176-2.071-.869-3.235-2.033-1.109-1.109-1.878-2.616-2.062-3.197-.205-.644-.196-1.353.037-1.956.121-.313.376-.576.715-.747.228-.115.467-.145.727-.145.289 0 .47.075.632.221l.035.032c.311.291.896.953 1.157 1.588.083.2.065.342.029.431-.031.077-.089.176-.239.37l-.055.071c-.244.316-.358.468-.337.669.011.111.054.218.125.321.319.463 1.102 1.343 1.948 1.956.115.083.242.138.369.155.197.027.35-.089.658-.328l.067-.052c.196-.152.321-.225.421-.247.113-.024.275-.028.513.088.549.266 1.129.839 1.396 1.154.129.152.193.315.193.579 0 .252-.036.486-.145.711-.168.344-.436.604-.755.731zm-2.887-11.751c-1.319-1.32-3.076-2.046-4.945-2.046-1.87 0-3.628.727-4.947 2.046-2.727 2.729-2.727 7.164 0 9.893 1.319 1.319 3.077 2.046 4.947 2.046.598 0 1.196-.081 1.776-.226l4.088 1.373-1.313-3.837c1.802-2.385 1.583-5.748-.494-7.825-1.042-1.041-2.428-1.615-3.901-1.615-1.474 0-2.86.574-3.902 1.615-2.152 2.152-2.152 5.651 0 7.804 1.043 1.042 2.429 1.615 3.902 1.615.655 0 1.294-.113 1.905-.333l.235.158.48.322c-.822.38-1.716.574-2.62.574-1.574 0-3.055-.613-4.167-1.726-2.298-2.299-2.298-6.035 0-8.335 1.113-1.112 2.593-1.725 4.167-1.725 1.575 0 3.056.613 4.168 1.725 2.298 2.3 2.298 6.037 0 8.336l-.375.375 1.109 3.242-3.414-1.146-.264.08c-3.159.932-6.575-.558-7.989-3.498-1.416-2.943-.27-6.425 2.585-7.986 2.894-1.581 6.476-.593 8.225 2.235.093.15.289.208.45.132.161-.075.234-.265.168-.429-1.921-4.755-7.519-6.953-12.238-4.807-4.707 2.14-6.848 7.697-4.685 12.443 2.162 4.747 7.731 6.877 12.438 4.757.514-.232.969-.533 1.385-.869l4.318 1.451c.366.122.756-.073.878-.44.053-.157.042-.325-.021-.476l-1.517-3.665c1.196-2.486.828-5.462-1.077-7.599z"/>
-    </svg>
-  );
-
-  // Дані для фотокарток (без 5-ї картки)
-  const cards = [
-    {
-      id: 1,
-      url: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?auto=format&fit=crop&q=80&w=800",
-      title: "Мрії Туманності",
-      category: "Далекий Космос",
-      desc: "Високоякісний друк глибини кольору."
-    },
-    {
-      id: 2,
-      url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=800",
-      title: "Альпійська Тиша",
-      category: "Земна Природа",
-      desc: "Передача найтонших відтінків світанку."
-    },
-    {
-      id: 3,
-      url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=800",
-      title: "Горизонт Подій",
-      category: "Абстракція",
-      desc: "Друк на професійному глянці."
-    },
-    {
-      id: 4,
-      url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=800",
-      title: "Галактичне Ядро",
-      category: "Космос",
-      desc: "Деталізація кожної зірки."
-    }
-  ];
-
-  // Прайс-лист згідно PDF
-  const prices = [
-    { format: "10x15 см", gloss: "23 грн", matte: "15 грн" },
-    { format: "13x18 см", gloss: "20 грн", matte: "17 грн" },
-    { format: "15x21 см (А5)", gloss: "21 грн", matte: "19 грн" },
-    { format: "21x30 см (А4)", gloss: "40 грн", matte: "32 грн" },
-    { format: "30x42 см (А3)", gloss: "70 грн", matte: "65 грн" },
-  ];
-
-  // Ефект паралаксу
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = (e.clientY / window.innerHeight) * 2 - 1;
-      setMousePos({ x, y });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  // Генерація зірок
-  const stars = Array.from({ length: 50 }).map((_, i) => ({
-    id: i,
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
-    size: Math.random() * 2 + 1,
-    delay: Math.random() * 5
-  }));
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    const subject = `Замовлення від ${formData.name}`;
-    const body = `${formData.message}`;
-    window.location.href = `mailto:mon.mothma.design@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  };
-
-  return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#050510] text-white font-sans selection:bg-purple-500 selection:text-white">
-      
-      {/* 1. ФОН */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a20] to-[#000000] opacity-80" />
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            className="absolute rounded-full bg-white animate-pulse"
-            style={{
-              top: star.top,
-              left: star.left,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              animationDuration: `${star.delay + 3}s`,
-              opacity: 0.6
-            }}
-          />
-        ))}
-        <div className="absolute -bottom-1/2 -right-1/4 w-[80vw] h-[80vw] rounded-full bg-purple-900/20 blur-[100px]" />
-        <div className="absolute -top-1/2 -left-1/4 w-[60vw] h-[60vw] rounded-full bg-blue-900/10 blur-[80px]" />
-      </div>
-
-      {/* 2. HEADER */}
-      <header className="absolute top-0 left-0 w-full p-6 md:p-8 z-30 flex justify-between items-center mix-blend-difference">
-        <div 
-          className="flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => setActiveSection('portfolio')}
-        >
-          <h1 className="text-3xl md:text-6xl font-thin tracking-[0.2em] uppercase font-serif text-white/90">
-            Mon Mothma
-          </h1>
-          <span className="text-[10px] md:text-sm tracking-[0.5em] text-purple-300 uppercase mt-2 ml-1">
-            Design Bureau
-          </span>
-        </div>
-        <div className="hidden md:flex gap-6 text-xs tracking-widest text-white/60">
-          <span>ДРУК</span>
-          <span>•</span>
-          <span>ДИЗАЙН</span>
-          <span>•</span>
-          <span>КОСМОС</span>
-        </div>
-      </header>
-
-      {/* 3. MAIN CONTENT SWITCHER */}
-      <main ref={containerRef} className="absolute inset-0 flex items-center justify-center perspective-1000">
+        // --- ІКОНКИ (Вбудовані SVG замість бібліотеки lucide-react для роботи без збірки) ---
         
-        {/* VIEW: PORTFOLIO */}
-        <div className={`relative w-full h-full max-w-6xl flex items-center justify-center transition-all duration-700 ${activeSection === 'portfolio' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-          {cards.map((card, index) => {
-            const offsetX = (index - 2) * 20 + mousePos.x * 20 * (index % 2 === 0 ? 1 : -1);
-            const offsetY = (index % 2) * 10 + mousePos.y * 20;
-            const rotateZ = (index - 2) * 5 + mousePos.x * 5;
-            const depth = index * 10;
+        const Sparkles = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 9h4"/></svg>
+        );
+        const X = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
+        );
+        const Camera = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+        );
+        const Send = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        );
+        const Mail = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        );
+
+        const TelegramIcon = () => (
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12.068 12.068 0 0 0-.108 0h.108zM9.408 17.568c.108 0 .216-.072.324-.216l-1.08-3.672 8.712-8.244c.324-.252.072-.432-.288-.252L6.12 11.232l-3.348-.972c-.684-.216-.72-.684.144-1.008l13.068-5.076c.576-.252 1.152.144.936 1.116l-2.268 10.728c-.18.792-.612.936-1.26.648l-3.456-2.52-1.692 1.62c-.18.18-.324.324-.54.324l.144-3.42 6.228-5.652c.252-.216-.072-.36-.36-.216l-7.776 4.932-.144.144-.072 2.376 1.656 1.26c.288.18.504.18.72.18z"/>
+            </svg>
+        );
+
+        const WhatsAppIcon = () => (
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+        );
+
+        const ViberIcon = () => (
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.424 18.256c-.569.213-1.272.245-1.921.053-.597-.176-2.071-.869-3.235-2.033-1.109-1.109-1.878-2.616-2.062-3.197-.205-.644-.196-1.353.037-1.956.121-.313.376-.576.715-.747.228-.115.467-.145.727-.145.289 0 .47.075.632.221l.035.032c.311.291.896.953 1.157 1.588.083.2.065.342.029.431-.031.077-.089.176-.239.37l-.055.071c-.244.316-.358.468-.337.669.011.111.054.218.125.321.319.463 1.102 1.343 1.948 1.956.115.083.242.138.369.155.197.027.35-.089.658-.328l.067-.052c.196-.152.321-.225.421-.247.113-.024.275-.028.513.088.549.266 1.129.839 1.396 1.154.129.152.193.315.193.579 0 .252-.036.486-.145.711-.168.344-.436.604-.755.731zm-2.887-11.751c-1.319-1.32-3.076-2.046-4.945-2.046-1.87 0-3.628.727-4.947 2.046-2.727 2.729-2.727 7.164 0 9.893 1.319 1.319 3.077 2.046 4.947 2.046.598 0 1.196-.081 1.776-.226l4.088 1.373-1.313-3.837c1.802-2.385 1.583-5.748-.494-7.825-1.042-1.041-2.428-1.615-3.901-1.615-1.474 0-2.86.574-3.902 1.615-2.152 2.152-2.152 5.651 0 7.804 1.043 1.042 2.429 1.615 3.902 1.615.655 0 1.294-.113 1.905-.333l.235.158.48.322c-.822.38-1.716.574-2.62.574-1.574 0-3.055-.613-4.167-1.726-2.298-2.299-2.298-6.035 0-8.335 1.113-1.112 2.593-1.725 4.167-1.725 1.575 0 3.056.613 4.168 1.725 2.298 2.3 2.298 6.037 0 8.336l-.375.375 1.109 3.242-3.414-1.146-.264.08c-3.159.932-6.575-.558-7.989-3.498-1.416-2.943-.27-6.425 2.585-7.986 2.894-1.581 6.476-.593 8.225 2.235.093.15.289.208.45.132.161-.075.234-.265.168-.429-1.921-4.755-7.519-6.953-12.238-4.807-4.707 2.14-6.848 7.697-4.685 12.443 2.162 4.747 7.731 6.877 12.438 4.757.514-.232.969-.533 1.385-.869l4.318 1.451c.366.122.756-.073.878-.44.053-.157.042-.325-.021-.476l-1.517-3.665c1.196-2.486.828-5.462-1.077-7.599z"/>
+            </svg>
+        );
+
+        // --- ГОЛОВНИЙ КОМПОНЕНТ ---
+
+        const MonMothmaPoster = () => {
+            const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+            const [selectedCard, setSelectedCard] = useState(null);
+            const [activeSection, setActiveSection] = useState('portfolio');
+            const containerRef = useRef(null);
+            
+            const [formData, setFormData] = useState({ name: '', message: '' });
+
+            // Дані для фотокарток (4 шт, без 5-ї)
+            const cards = [
+                {
+                    id: 1,
+                    url: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?auto=format&fit=crop&q=80&w=800",
+                    title: "Мрії Туманності",
+                    category: "Далекий Космос",
+                    desc: "Високоякісний друк глибини кольору."
+                },
+                {
+                    id: 2,
+                    url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=800",
+                    title: "Альпійська Тиша",
+                    category: "Земна Природа",
+                    desc: "Передача найтонших відтінків світанку."
+                },
+                {
+                    id: 3,
+                    url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=800",
+                    title: "Горизонт Подій",
+                    category: "Абстракція",
+                    desc: "Друк на професійному глянці."
+                },
+                {
+                    id: 4,
+                    url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=800",
+                    title: "Галактичне Ядро",
+                    category: "Космос",
+                    desc: "Деталізація кожної зірки."
+                }
+            ];
+
+            const prices = [
+                { format: "10x15 см", gloss: "23 грн", matte: "15 грн" },
+                { format: "13x18 см", gloss: "20 грн", matte: "17 грн" },
+                { format: "15x21 см (А5)", gloss: "21 грн", matte: "19 грн" },
+                { format: "21x30 см (А4)", gloss: "40 грн", matte: "32 грн" },
+                { format: "30x42 см (А3)", gloss: "70 грн", matte: "65 грн" },
+            ];
+
+            useEffect(() => {
+                const handleMouseMove = (e) => {
+                    const x = (e.clientX / window.innerWidth) * 2 - 1;
+                    const y = (e.clientY / window.innerHeight) * 2 - 1;
+                    setMousePos({ x, y });
+                };
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => window.removeEventListener('mousemove', handleMouseMove);
+            }, []);
+
+            const stars = Array.from({ length: 50 }).map((_, i) => ({
+                id: i,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                size: Math.random() * 2 + 1,
+                delay: Math.random() * 5
+            }));
+
+            const handleFormSubmit = (e) => {
+                e.preventDefault();
+                const subject = `Замовлення від ${formData.name}`;
+                const body = `${formData.message}`;
+                window.location.href = `mailto:mon.mothma.design@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            };
 
             return (
-              <div
-                key={card.id}
-                onClick={() => activeSection === 'portfolio' && setSelectedCard(card)}
-                className="absolute group cursor-pointer transition-all duration-700 ease-out"
-                style={{
-                  transform: `translate3d(${offsetX}%, ${offsetY}%, ${depth}px) rotateZ(${rotateZ}deg)`,
-                  zIndex: index,
-                  width: '240px',
-                  height: '360px',
-                }}
-              >
-                <div className="relative w-full h-full p-3 bg-white shadow-2xl transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-4 group-hover:shadow-purple-500/30 rounded-sm">
-                  <div className="relative w-full h-[85%] overflow-hidden bg-gray-100">
-                    <img src={card.url} alt={card.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                  </div>
-                  <div className="mt-3 flex justify-between items-end">
-                    <div>
-                      <h3 className="text-gray-800 text-xs font-bold tracking-widest uppercase">{card.category}</h3>
-                      <p className="text-gray-400 text-[10px] tracking-wide">10x15 Глянець</p>
+                <div className="relative w-full h-screen overflow-hidden bg-[#050510] text-white font-sans selection:bg-purple-500 selection:text-white">
+                    
+                    {/* 1. ФОН */}
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a20] to-[#000000] opacity-80" />
+                        {stars.map((star) => (
+                            <div
+                                key={star.id}
+                                className="absolute rounded-full bg-white animate-pulse"
+                                style={{
+                                    top: star.top,
+                                    left: star.left,
+                                    width: `${star.size}px`,
+                                    height: `${star.size}px`,
+                                    animationDuration: `${star.delay + 3}s`,
+                                    opacity: 0.6
+                                }}
+                            />
+                        ))}
+                        <div className="absolute -bottom-1/2 -right-1/4 w-[80vw] h-[80vw] rounded-full bg-purple-900/20 blur-[100px]" />
+                        <div className="absolute -top-1/2 -left-1/4 w-[60vw] h-[60vw] rounded-full bg-blue-900/10 blur-[80px]" />
                     </div>
-                    <Sparkles className="w-4 h-4 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
+
+                    {/* 2. HEADER */}
+                    <header className="absolute top-0 left-0 w-full p-6 md:p-8 z-30 flex justify-between items-center mix-blend-difference">
+                        <div 
+                            className="flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => setActiveSection('portfolio')}
+                        >
+                            <h1 className="text-3xl md:text-6xl font-thin tracking-[0.2em] uppercase font-serif text-white/90">
+                                Mon Mothma
+                            </h1>
+                            <span className="text-[10px] md:text-sm tracking-[0.5em] text-purple-300 uppercase mt-2 ml-1">
+                                Design Bureau
+                            </span>
+                        </div>
+                        <div className="hidden md:flex gap-6 text-xs tracking-widest text-white/60">
+                            <span>ДРУК</span>
+                            <span>•</span>
+                            <span>ДИЗАЙН</span>
+                            <span>•</span>
+                            <span>КОСМОС</span>
+                        </div>
+                    </header>
+
+                    {/* 3. MAIN CONTENT */}
+                    <main ref={containerRef} className="absolute inset-0 flex items-center justify-center perspective-1000">
+                        
+                        {/* VIEW: PORTFOLIO */}
+                        <div className={`relative w-full h-full max-w-6xl flex items-center justify-center transition-all duration-700 ${activeSection === 'portfolio' ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                            {cards.map((card, index) => {
+                                const offsetX = (index - 2) * 20 + mousePos.x * 20 * (index % 2 === 0 ? 1 : -1);
+                                const offsetY = (index % 2) * 10 + mousePos.y * 20;
+                                const rotateZ = (index - 2) * 5 + mousePos.x * 5;
+                                const depth = index * 10;
+
+                                return (
+                                    <div
+                                        key={card.id}
+                                        onClick={() => activeSection === 'portfolio' && setSelectedCard(card)}
+                                        className="absolute group cursor-pointer transition-all duration-700 ease-out"
+                                        style={{
+                                            transform: `translate3d(${offsetX}%, ${offsetY}%, ${depth}px) rotateZ(${rotateZ}deg)`,
+                                            zIndex: index,
+                                            width: '240px',
+                                            height: '360px',
+                                        }}
+                                    >
+                                        <div className="relative w-full h-full p-3 bg-white shadow-2xl transition-transform duration-300 group-hover:scale-105 group-hover:-translate-y-4 group-hover:shadow-purple-500/30 rounded-sm">
+                                            <div className="relative w-full h-[85%] overflow-hidden bg-gray-100">
+                                                <img src={card.url} alt={card.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                                                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                                            </div>
+                                            <div className="mt-3 flex justify-between items-end">
+                                                <div>
+                                                    <h3 className="text-gray-800 text-xs font-bold tracking-widest uppercase">{card.category}</h3>
+                                                    <p className="text-gray-400 text-[10px] tracking-wide">10x15 Глянець</p>
+                                                </div>
+                                                <Sparkles className="w-4 h-4 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* VIEW: PRICES */}
+                        <div className={`absolute inset-0 flex items-center justify-center p-4 transition-all duration-700 ${activeSection === 'prices' ? 'opacity-100 z-20' : 'opacity-0 z-0 pointer-events-none'}`}>
+                            <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-lg max-w-3xl w-full shadow-[0_0_50px_rgba(139,92,246,0.1)]">
+                                <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                                    <h2 className="text-3xl font-serif text-white tracking-widest">ПРАЙС-ЛИСТ</h2>
+                                    <button onClick={() => setActiveSection('portfolio')} className="text-white/50 hover:text-white"><X className="w-6 h-6" /></button>
+                                </div>
+                                
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-sm md:text-base">
+                                        <thead>
+                                            <tr className="text-purple-300 border-b border-white/5 tracking-widest uppercase text-xs">
+                                                <th className="py-4 font-normal">Формат</th>
+                                                <th className="py-4 font-normal text-right">Глянцевий</th>
+                                                <th className="py-4 font-normal text-right">Матовий</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-gray-300">
+                                            {prices.map((item, idx) => (
+                                                <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                                    <td className="py-4">{item.format}</td>
+                                                    <td className="py-4 text-right font-mono text-purple-200">{item.gloss}</td>
+                                                    <td className="py-4 text-right font-mono text-blue-200">{item.matte}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-6 tracking-wide">* Мінімальне замовлення 100 грн. Нестандартні розміри - індивідуально.</p>
+                            </div>
+                        </div>
+
+                        {/* VIEW: CONTACTS */}
+                        <div className={`absolute inset-0 flex items-center justify-center p-4 transition-all duration-700 ${activeSection === 'contact' ? 'opacity-100 z-20' : 'opacity-0 z-0 pointer-events-none'}`}>
+                            <div className="bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-lg max-w-4xl w-full flex flex-col md:flex-row overflow-hidden shadow-2xl">
+                                
+                                {/* Ліва частина */}
+                                <div className="md:w-1/2 p-8 md:p-12 bg-gradient-to-br from-purple-900/20 to-transparent flex flex-col justify-between">
+                                    <div>
+                                        <h2 className="text-3xl font-serif text-white mb-2">ЗВ'ЯЗОК</h2>
+                                        <p className="text-purple-300 text-xs tracking-[0.2em] uppercase mb-8">Ми завжди на зв'язку</p>
+                                        
+                                        <div className="space-y-6">
+                                            <a href="https://t.me/mon_mothma_design" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-gray-300 hover:text-blue-400 transition-colors group">
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-500/20 border border-white/10"><TelegramIcon /></div>
+                                                <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Telegram</span><span>@mon_mothma_design</span></div>
+                                            </a>
+                                            
+                                            <a href="viber://chat?number=%2B380961775991" className="flex items-center gap-4 text-gray-300 hover:text-purple-400 transition-colors group">
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-purple-500/20 border border-white/10"><ViberIcon /></div>
+                                                <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Viber</span><span>+38 (096) 177-59-91</span></div>
+                                            </a>
+
+                                            <a href="https://wa.me/380961775991" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-gray-300 hover:text-green-400 transition-colors group">
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-green-500/20 border border-white/10"><WhatsAppIcon /></div>
+                                                <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">WhatsApp</span><span>+38 (096) 177-59-91</span></div>
+                                            </a>
+
+                                            <a href="mailto:mon.mothma.design@gmail.com" className="flex items-center gap-4 text-gray-300 hover:text-red-400 transition-colors group">
+                                                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-red-500/20 border border-white/10"><Mail className="w-5 h-5" /></div>
+                                                <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Gmail</span><span>mon.mothma.design</span></div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Права частина */}
+                                <div className="md:w-1/2 p-8 md:p-12 relative">
+                                    <button onClick={() => setActiveSection('portfolio')} className="absolute top-4 right-4 text-white/50 hover:text-white"><X className="w-6 h-6" /></button>
+                                    <h3 className="text-sm tracking-widest uppercase text-white/60 mb-6">Написати нам</h3>
+                                    
+                                    <form onSubmit={handleFormSubmit} className="space-y-6">
+                                        <div>
+                                            <label className="block text-xs uppercase tracking-widest text-purple-300 mb-2">Ваше ім'я</label>
+                                            <input 
+                                                type="text" 
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                                placeholder="Як до вас звертатися?"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs uppercase tracking-widest text-purple-300 mb-2">Повідомлення</label>
+                                            <textarea 
+                                                rows="4"
+                                                value={formData.message}
+                                                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                                                className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                                placeholder="Опишіть ваше замовлення..."
+                                                required
+                                            ></textarea>
+                                        </div>
+                                        <button type="submit" className="w-full bg-white text-black py-4 font-bold tracking-[0.2em] hover:bg-purple-100 transition-colors uppercase text-xs flex items-center justify-center gap-2">
+                                            <Send className="w-4 h-4" /> Надіслати лист
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {/* BACKGROUND TEXT */}
+                        <div className="absolute z-[-1] text-center pointer-events-none opacity-20">
+                            <p className="text-[10vw] font-serif italic leading-none text-white/50 blur-sm">Capture</p>
+                            <p className="text-[10vw] font-serif italic leading-none text-white/50 blur-sm ml-20">Infinity</p>
+                        </div>
+                    </main>
+
+                    {/* 4. MODAL */}
+                    {selectedCard && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-all duration-500">
+                            <div className="relative bg-[#1a1a2e] border border-white/10 rounded-lg shadow-2xl max-w-4xl w-full flex flex-col md:flex-row overflow-hidden">
+                                <button onClick={() => setSelectedCard(null)} className="absolute top-4 right-4 text-white/50 hover:text-white z-10"><X className="w-6 h-6" /></button>
+                                <div className="w-full md:w-1/2 h-64 md:h-auto relative">
+                                    <img src={selectedCard.url} alt={selectedCard.title} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
+                                    <h2 className="text-3xl font-serif text-white mb-2">{selectedCard.title}</h2>
+                                    <p className="text-purple-300 text-sm tracking-widest uppercase mb-6">{selectedCard.category}</p>
+                                    <p className="text-gray-300 mb-8">{selectedCard.desc} Фотодрук найвищої якості у студії Mon Mothma.</p>
+                                    <button 
+                                        onClick={() => { setSelectedCard(null); setActiveSection('contact'); }}
+                                        className="w-full bg-white text-black py-4 font-bold tracking-[0.2em] hover:bg-purple-100 transition-colors uppercase text-xs flex items-center justify-center gap-2"
+                                    >
+                                        <Camera className="w-4 h-4" /> Замовити друк
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 5. FOOTER */}
+                    <footer className="absolute bottom-8 left-0 w-full flex justify-center gap-12 text-white/40 text-xs tracking-widest z-30">
+                        <button onClick={() => setActiveSection('portfolio')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'portfolio' ? 'text-white' : ''}`}>
+                            <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'portfolio' ? 'bg-purple-400 h-10' : ''}`} />
+                            ПОРТФОЛІО
+                        </button>
+                        <button onClick={() => setActiveSection('prices')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'prices' ? 'text-white' : ''}`}>
+                            <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'prices' ? 'bg-purple-400 h-10' : ''}`} />
+                            ПРАЙС
+                        </button>
+                        <button onClick={() => setActiveSection('contact')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'contact' ? 'text-white' : ''}`}>
+                            <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'contact' ? 'bg-purple-400 h-10' : ''}`} />
+                            КОНТАКТИ
+                        </button>
+                    </footer>
+
                 </div>
-              </div>
             );
-          })}
-        </div>
+        };
 
-        {/* VIEW: PRICES */}
-        <div className={`absolute inset-0 flex items-center justify-center p-4 transition-all duration-700 ${activeSection === 'prices' ? 'opacity-100 z-20' : 'opacity-0 z-0 pointer-events-none'}`}>
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-lg max-w-3xl w-full shadow-[0_0_50px_rgba(139,92,246,0.1)]">
-            <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
-               <h2 className="text-3xl font-serif text-white tracking-widest">ПРАЙС-ЛИСТ</h2>
-               <button onClick={() => setActiveSection('portfolio')} className="text-white/50 hover:text-white"><X /></button>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm md:text-base">
-                <thead>
-                  <tr className="text-purple-300 border-b border-white/5 tracking-widest uppercase text-xs">
-                    <th className="py-4 font-normal">Формат</th>
-                    <th className="py-4 font-normal text-right">Глянцевий</th>
-                    <th className="py-4 font-normal text-right">Матовий</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-300">
-                  {prices.map((item, idx) => (
-                    <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="py-4">{item.format}</td>
-                      <td className="py-4 text-right font-mono text-purple-200">{item.gloss}</td>
-                      <td className="py-4 text-right font-mono text-blue-200">{item.matte}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-500 mt-6 tracking-wide">* Мінімальне замовлення 100 грн. Нестандартні розміри - індивідуально.</p>
-          </div>
-        </div>
-
-        {/* VIEW: CONTACTS */}
-        <div className={`absolute inset-0 flex items-center justify-center p-4 transition-all duration-700 ${activeSection === 'contact' ? 'opacity-100 z-20' : 'opacity-0 z-0 pointer-events-none'}`}>
-          <div className="bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-lg max-w-4xl w-full flex flex-col md:flex-row overflow-hidden shadow-2xl">
-            
-            {/* Ліва частина: Інфо та Кнопки */}
-            <div className="md:w-1/2 p-8 md:p-12 bg-gradient-to-br from-purple-900/20 to-transparent flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-serif text-white mb-2">ЗВ'ЯЗОК</h2>
-                <p className="text-purple-300 text-xs tracking-[0.2em] uppercase mb-8">Ми завжди на зв'язку</p>
-                
-                <div className="space-y-6">
-                  <a href="https://t.me/mon_mothma_design" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-gray-300 hover:text-blue-400 transition-colors group">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-500/20 border border-white/10"><TelegramIcon /></div>
-                    <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Telegram</span><span>@mon_mothma_design</span></div>
-                  </a>
-                  
-                  <a href="viber://chat?number=%2B380961775991" className="flex items-center gap-4 text-gray-300 hover:text-purple-400 transition-colors group">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-purple-500/20 border border-white/10"><ViberIcon /></div>
-                    <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Viber</span><span>+38 (096) 177-59-91</span></div>
-                  </a>
-
-                  <a href="https://wa.me/380961775991" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-gray-300 hover:text-green-400 transition-colors group">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-green-500/20 border border-white/10"><WhatsAppIcon /></div>
-                    <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">WhatsApp</span><span>+38 (096) 177-59-91</span></div>
-                  </a>
-
-                  <a href="mailto:mon.mothma.design@gmail.com" className="flex items-center gap-4 text-gray-300 hover:text-red-400 transition-colors group">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-red-500/20 border border-white/10"><Mail className="w-5 h-5" /></div>
-                    <div className="flex flex-col"><span className="text-xs text-gray-500 uppercase">Gmail</span><span>mon.mothma.design</span></div>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Права частина: Форма */}
-            <div className="md:w-1/2 p-8 md:p-12 relative">
-               <button onClick={() => setActiveSection('portfolio')} className="absolute top-4 right-4 text-white/50 hover:text-white"><X /></button>
-               <h3 className="text-sm tracking-widest uppercase text-white/60 mb-6">Написати нам</h3>
-               
-               <form onSubmit={handleFormSubmit} className="space-y-6">
-                 <div>
-                   <label className="block text-xs uppercase tracking-widest text-purple-300 mb-2">Ваше ім'я</label>
-                   <input 
-                     type="text" 
-                     value={formData.name}
-                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                     className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-                     placeholder="Як до вас звертатися?"
-                     required
-                   />
-                 </div>
-                 <div>
-                   <label className="block text-xs uppercase tracking-widest text-purple-300 mb-2">Повідомлення</label>
-                   <textarea 
-                     rows="4"
-                     value={formData.message}
-                     onChange={(e) => setFormData({...formData, message: e.target.value})}
-                     className="w-full bg-white/5 border border-white/10 rounded p-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-                     placeholder="Опишіть ваше замовлення..."
-                     required
-                   ></textarea>
-                 </div>
-                 <button type="submit" className="w-full bg-white text-black py-4 font-bold tracking-[0.2em] hover:bg-purple-100 transition-colors uppercase text-xs flex items-center justify-center gap-2">
-                   <Send className="w-4 h-4" /> Надіслати лист
-                 </button>
-               </form>
-            </div>
-
-          </div>
-        </div>
-
-        {/* BACKGROUND TEXT */}
-        <div className="absolute z-[-1] text-center pointer-events-none opacity-20">
-          <p className="text-[10vw] font-serif italic leading-none text-white/50 blur-sm">Capture</p>
-          <p className="text-[10vw] font-serif italic leading-none text-white/50 blur-sm ml-20">Infinity</p>
-        </div>
-      </main>
-
-      {/* 4. MODAL (DETAIL VIEW) */}
-      {selectedCard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-all duration-500">
-          <div className="relative bg-[#1a1a2e] border border-white/10 rounded-lg shadow-2xl max-w-4xl w-full flex flex-col md:flex-row overflow-hidden">
-            <button onClick={() => setSelectedCard(null)} className="absolute top-4 right-4 text-white/50 hover:text-white z-10"><X className="w-6 h-6" /></button>
-            <div className="w-full md:w-1/2 h-64 md:h-auto relative">
-              <img src={selectedCard.url} alt={selectedCard.title} className="w-full h-full object-cover" />
-            </div>
-            <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
-              <h2 className="text-3xl font-serif text-white mb-2">{selectedCard.title}</h2>
-              <p className="text-purple-300 text-sm tracking-widest uppercase mb-6">{selectedCard.category}</p>
-              <p className="text-gray-300 mb-8">{selectedCard.desc} Фотодрук найвищої якості у студії Mon Mothma.</p>
-              <button 
-                onClick={() => { setSelectedCard(null); setActiveSection('contact'); }}
-                className="w-full bg-white text-black py-4 font-bold tracking-[0.2em] hover:bg-purple-100 transition-colors uppercase text-xs flex items-center justify-center gap-2"
-              >
-                <Camera className="w-4 h-4" /> Замовити друк
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 5. FOOTER NAV */}
-      <footer className="absolute bottom-8 left-0 w-full flex justify-center gap-12 text-white/40 text-xs tracking-widest z-30">
-        <button onClick={() => setActiveSection('portfolio')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'portfolio' ? 'text-white' : ''}`}>
-          <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'portfolio' ? 'bg-purple-400 h-10' : ''}`} />
-          ПОРТФОЛІО
-        </button>
-        <button onClick={() => setActiveSection('prices')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'prices' ? 'text-white' : ''}`}>
-          <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'prices' ? 'bg-purple-400 h-10' : ''}`} />
-          ПРАЙС
-        </button>
-        <button onClick={() => setActiveSection('contact')} className={`hover:text-white hover:scale-110 transition-all flex flex-col items-center gap-1 group ${activeSection === 'contact' ? 'text-white' : ''}`}>
-          <div className={`w-1 h-8 bg-white/20 group-hover:bg-purple-400 transition-colors mb-1 ${activeSection === 'contact' ? 'bg-purple-400 h-10' : ''}`} />
-          КОНТАКТИ
-        </button>
-      </footer>
-
-    </div>
-  );
-};
-
-export default MonMothmaPoster;
+        ReactDOM.createRoot(document.getElementById('root')).render(<MonMothmaPoster />);
+    </script>
+</body>
+</html>
